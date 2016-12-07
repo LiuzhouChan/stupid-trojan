@@ -18,18 +18,24 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
+    <ClInclude Include="BrowsHistory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\CppSQLite3.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="stupid-trojan.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="stupid-trojan.cpp">
+    <ClCompile Include="BrowsHistory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\CppSQLite3.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
