@@ -4,21 +4,26 @@
 #include <vector>  
 #include "afxwin.h"  
 #include "BrowsHistory.h"  
-
+#include <iostream>
+#include <fstream>
+#include <cstring>
 using namespace std;
 
-int _tmain(int argc, _TCHAR* argv[])
+int main()
 {
 	BrowsHistory browseHistory;
 	browseHistory.Init();
 	while (!browseHistory.m_bStatus);	//等待获取完成  
 	auto data = browseHistory.GetBrowsHistory();
-	auto it = data.begin();
-
-	for (; it<data.end(); ++it)
+	
+	wofstream outfile("log");
+	for (auto it = data.begin(); it<data.end(); ++it)
 	{
-		wprintf(_T("%s\n"), it->strURL);
+		wcout << it->strURL.GetString() << "  " << it->nCount << endl;
+		outfile << it->strURL.GetString() << "  " << it->nCount << endl;
 	}
+
+	outfile.close();
 	getchar();
 	return 0;
 }

@@ -6,8 +6,6 @@
 #include "tlhelp32.h"  
 #include <atlconv.h>  
 
-
-
 #pragma  comment(lib,"Shlwapi.lib")  
 #pragma comment(lib,"Common/sqlite3.lib")  
 
@@ -158,7 +156,7 @@ void BrowsHistory::InitHistroy(void)
 }
 void BrowsHistory::ThreadPro(LPVOID * ptr)
 {
-	BrowsHistory * pBrowsHistroy = (BrowsHistory*)ptr;
+	auto pBrowsHistroy = (BrowsHistory*)ptr;
 	pBrowsHistroy->InitHistroy();
 
 	// 获取网址的函数执行完了  
