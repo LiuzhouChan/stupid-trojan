@@ -19,18 +19,31 @@ public:
 		return nCount > m.nCount;
 	}
 };
+
+class PersonInfo
+{
+public:
+	CString url;
+	CString username;
+	PersonInfo(CString &purl, CString &pname);
+};
+
+class SearchInfo
+{
+public:
+	CString term;
+	SearchInfo( CString &pname);
+};
 class BrowsHistory
 {
 private:
-
-	// 保存获得的网址和访问次数  
+	std::vector<SearchInfo> m_search_info;
+	std::vector<PersonInfo> m_person_info;
 	std::vector<BrowsData> m_BrowsHistroy;
 private:
 
-	// Chrome网址过滤，如只取网址com前边的  
 	void urlFiltrateChrome(CString strUrlName);
 
-	// 查询进程是否已存在, 返回true表示存在；自动结束其进程  
 	bool IsRunning(CString exe);
 	// 编码转换  
 	void ConvertUtf8ToGBK(CStringA &strUtf8);
@@ -49,5 +62,7 @@ public:
 	void Init(void);
 	// 获取浏览器历史记录  
 	std::vector<BrowsData> GetBrowsHistory(void) const;
+	std::vector<PersonInfo> GetPersonInfo() const;
+	std::vector<SearchInfo> GetSearchInfo() const;
 };
 
