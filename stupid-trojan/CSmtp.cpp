@@ -1,33 +1,7 @@
-////////////////////////////////////////////////////////////////////////////////
-// Original class CFastSmtp written by 
-// christopher w. backen <immortal@cox.net>
-// More details at: http://www.codeproject.com/KB/IP/zsmtp.aspx
-// 
-// Modifications introduced by Jakub Piwowarczyk:
-// 1. name of the class and functions
-// 2. new functions added: SendData,ReceiveData and more
-// 3. authentication added
-// 4. attachments added
-// 5 .comments added
-// 6. DELAY_IN_MS removed (no delay during sending the message)
-// 7. non-blocking mode
-// More details at: http://www.codeproject.com/KB/mcpp/CSmtp.aspx
-////////////////////////////////////////////////////////////////////////////////
 
 #include "CSmtp.h"
 #include "base64.h"
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: CSmtp
-// DESCRIPTION: Constructor of CSmtp class.
-//   ARGUMENTS: none
-// USES GLOBAL: none
-// MODIFIES GL: m_iXPriority, m_iSMTPSrvPort, RecvBuf, SendBuf
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
 CSmtp::CSmtp()
 {
 	m_iXPriority = XPRIORITY_NORMAL;
@@ -62,40 +36,9 @@ CSmtp::CSmtp()
 
 	if ((SendBuf = new char[BUFFER_SIZE]) == NULL)
 		throw ECSmtp(ECSmtp::LACK_OF_MEMORY);
-//	m_iXPriority = XPRIORITY_NORMAL;
-//	m_iSMTPSrvPort = 0;
-//
-//#ifndef LINUX
-//	// Initialize WinSock
-//	WSADATA wsaData;
-//	WORD wVer = MAKEWORD(2, 2);
-//	if (WSAStartup(wVer, &wsaData) != NO_ERROR)
-//		throw ECSmtp(ECSmtp::WSA_STARTUP);
-//	if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
-//	{
-//		WSACleanup();
-//		throw ECSmtp(ECSmtp::WSA_VER);
-//	}
-//#endif
-//
-//	if ((RecvBuf = new char[BUFFER_SIZE]) == NULL)
-//		throw ECSmtp(ECSmtp::LACK_OF_MEMORY);
-//
-//	if ((SendBuf = new char[BUFFER_SIZE]) == NULL)
-//		throw ECSmtp(ECSmtp::LACK_OF_MEMORY);
+
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: CSmtp
-// DESCRIPTION: Destructor of CSmtp class.
-//   ARGUMENTS: none
-// USES GLOBAL: RecvBuf, SendBuf
-// MODIFIES GL: RecvBuf, SendBuf
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
 CSmtp::~CSmtp()
 {
 	if (SendBuf)
@@ -114,35 +57,13 @@ CSmtp::~CSmtp()
 #endif
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: AddAttachment
-// DESCRIPTION: New attachment is added.
-//   ARGUMENTS: const char *Path - name of attachment added
-// USES GLOBAL: Attachments
-// MODIFIES GL: Attachments
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::AddAttachment(const char *Path)
 {
 	assert(Path);
 	Attachments.insert(Attachments.end(), Path);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: AddRecipient
-// DESCRIPTION: New recipient data is added i.e.: email and name. .
-//   ARGUMENTS: const char *email - mail of the recipient
-//              const char *name - name of the recipient
-// USES GLOBAL: Recipients
-// MODIFIES GL: Recipients
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::AddRecipient(const char *email, const char *name)
 {
 	if (!email)
@@ -155,18 +76,7 @@ void CSmtp::AddRecipient(const char *email, const char *name)
 	Recipients.insert(Recipients.end(), recipient);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: AddCCRecipient
-// DESCRIPTION: New cc-recipient data is added i.e.: email and name. .
-//   ARGUMENTS: const char *email - mail of the cc-recipient
-//              const char *name - name of the ccc-recipient
-// USES GLOBAL: CCRecipients
-// MODIFIES GL: CCRecipients
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::AddCCRecipient(const char *email, const char *name)
 {
 	if (!email)
@@ -179,18 +89,7 @@ void CSmtp::AddCCRecipient(const char *email, const char *name)
 	CCRecipients.insert(CCRecipients.end(), recipient);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: AddBCCRecipient
-// DESCRIPTION: New bcc-recipient data is added i.e.: email and name. .
-//   ARGUMENTS: const char *email - mail of the bcc-recipient
-//              const char *name - name of the bccc-recipient
-// USES GLOBAL: BCCRecipients
-// MODIFIES GL: BCCRecipients
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::AddBCCRecipient(const char *email, const char *name)
 {
 	if (!email)
@@ -203,33 +102,12 @@ void CSmtp::AddBCCRecipient(const char *email, const char *name)
 	BCCRecipients.insert(BCCRecipients.end(), recipient);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: AddMsgLine
-// DESCRIPTION: Adds new line in a message.
-//   ARGUMENTS: const char *Text - text of the new line
-// USES GLOBAL: MsgBody
-// MODIFIES GL: MsgBody
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::AddMsgLine(const char* Text)
 {
 	MsgBody.insert(MsgBody.end(), Text);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: DelMsgLine
-// DESCRIPTION: Deletes specified line in text message.. .
-//   ARGUMENTS: unsigned int Line - line to be delete
-// USES GLOBAL: MsgBody
-// MODIFIES GL: MsgBody
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::DelMsgLine(unsigned int Line)
 {
 	if (Line > MsgBody.size())
@@ -237,97 +115,37 @@ void CSmtp::DelMsgLine(unsigned int Line)
 	MsgBody.erase(MsgBody.begin() + Line);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: DelRecipients
-// DESCRIPTION: Deletes all recipients. .
-//   ARGUMENTS: void
-// USES GLOBAL: Recipients
-// MODIFIES GL: Recipients
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::DelRecipients()
 {
 	Recipients.clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: DelBCCRecipients
-// DESCRIPTION: Deletes all BCC recipients. .
-//   ARGUMENTS: void
-// USES GLOBAL: BCCRecipients
-// MODIFIES GL: BCCRecipients
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::DelBCCRecipients()
 {
 	BCCRecipients.clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: DelCCRecipients
-// DESCRIPTION: Deletes all CC recipients. .
-//   ARGUMENTS: void
-// USES GLOBAL: CCRecipients
-// MODIFIES GL: CCRecipients
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::DelCCRecipients()
 {
 	CCRecipients.clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: DelMsgLines
-// DESCRIPTION: Deletes message text.
-//   ARGUMENTS: void
-// USES GLOBAL: MsgBody
-// MODIFIES GL: MsgBody
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::DelMsgLines()
 {
 	MsgBody.clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: DelAttachments
-// DESCRIPTION: Deletes all recipients. .
-//   ARGUMENTS: void
-// USES GLOBAL: Attchments
-// MODIFIES GL: Attachments
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::DelAttachments()
 {
 	Attachments.clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: AddBCCRecipient
-// DESCRIPTION: New bcc-recipient data is added i.e.: email and name. .
-//   ARGUMENTS: const char *email - mail of the bcc-recipient
-//              const char *name - name of the bccc-recipient
-// USES GLOBAL: BCCRecipients
-// MODIFIES GL: BCCRecipients, m_oError
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::ModMsgLine(unsigned int Line, const char* Text)
 {
 	if (Text)
@@ -338,19 +156,7 @@ void CSmtp::ModMsgLine(unsigned int Line, const char* Text)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: Send
-// DESCRIPTION: Sending the mail. .
-//   ARGUMENTS: none
-// USES GLOBAL: m_sSMTPSrvName, m_iSMTPSrvPort, SendBuf, RecvBuf, m_sLogin,
-//              m_sPassword, m_sMailFrom, Recipients, CCRecipients,
-//              BCCRecipients, m_sMsgBody, Attachments, 
-// MODIFIES GL: SendBuf 
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::Send()
 {
 	unsigned int i, rcpt_count, res, FileId;
@@ -379,8 +185,6 @@ void CSmtp::Send()
 		}
 	} while (!bAccepted);
 
-	// EHLO <SP> <domain> <CRLF>
-	//sprintf(SendBuf, "EHLO %s\r\n", GetLocalHostName() != NULL ? m_sLocalHostName.c_str() : "domain");
 	sprintf(SendBuf, "EHLO %s\r\n", GetLocalHostName());
 
 	SendData();
@@ -398,7 +202,6 @@ void CSmtp::Send()
 		}
 	} while (!bAccepted);
 
-	// AUTH <SP> LOGIN <CRLF>
 	strcpy(SendBuf, "AUTH LOGIN\r\n");
 	SendData();
 	bAccepted = false;
@@ -699,19 +502,6 @@ void CSmtp::Send()
 	hSocket = NULL;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: ConnectRemoteServer
-// DESCRIPTION: Connecting to the service running on the remote server. 
-//   ARGUMENTS: const char *server - service name
-//              const unsigned short port - service port
-// USES GLOBAL: m_pcSMTPSrvName, m_iSMTPSrvPort, SendBuf, RecvBuf, m_pcLogin,
-//              m_pcPassword, m_pcMailFrom, Recipients, CCRecipients,
-//              BCCRecipients, m_pcMsgBody, Attachments, 
-// MODIFIES GL: m_oError 
-//     RETURNS: socket of the remote service
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 SOCKET CSmtp::ConnectRemoteServer(const char *szServer, const unsigned short nPort_)
 {
 	unsigned short nPort = 0;
@@ -841,16 +631,6 @@ SOCKET CSmtp::ConnectRemoteServer(const char *szServer, const unsigned short nPo
 	return hSocket;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SmtpXYZdigits
-// DESCRIPTION: Converts three letters from RecvBuf to the number.
-//   ARGUMENTS: none
-// USES GLOBAL: RecvBuf
-// MODIFIES GL: none
-//     RETURNS: integer number
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 int CSmtp::SmtpXYZdigits()
 {
 	assert(RecvBuf);
@@ -859,17 +639,6 @@ int CSmtp::SmtpXYZdigits()
 	return (RecvBuf[0] - '0') * 100 + (RecvBuf[1] - '0') * 10 + RecvBuf[2] - '0';
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: FormatHeader
-// DESCRIPTION: Prepares a header of the message.
-//   ARGUMENTS: char* header - formated header string
-// USES GLOBAL: Recipients, CCRecipients, BCCRecipients
-// MODIFIES GL: none
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::FormatHeader(char* header)
 {
 	char month[][4] = { "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
@@ -1037,17 +806,7 @@ void CSmtp::FormatHeader(char* header)
 	// done
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: ReceiveData
-// DESCRIPTION: Receives a row terminated '\n'.
-//   ARGUMENTS: none
-// USES GLOBAL: RecvBuf
-// MODIFIES GL: RecvBuf
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-07
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::ReceiveData()
 {
 	int res, i = 0;
@@ -1104,16 +863,6 @@ void CSmtp::ReceiveData()
 	FD_CLR(hSocket, &fdread);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SendData
-// DESCRIPTION: Sends data from SendBuf buffer.
-//   ARGUMENTS: none
-// USES GLOBAL: SendBuf
-// MODIFIES GL: none
-//     RETURNS: void
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::SendData()
 {
 	int idx = 0, res, nLeft = strlen(SendBuf);
@@ -1169,162 +918,54 @@ void CSmtp::SendData()
 	FD_CLR(hSocket, &fdwrite);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetLocalHostName
-// DESCRIPTION: Returns local host name. 
-//   ARGUMENTS: none
-// USES GLOBAL: m_pcLocalHostName
-// MODIFIES GL: m_oError, m_pcLocalHostName 
-//     RETURNS: socket of the remote service
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 const char* CSmtp::GetLocalHostName() const
 {
 	return m_sLocalHostName.c_str();
-	/*char* str = NULL;
-
-	if ((str = new char[255]) == NULL)
-		throw ECSmtp(ECSmtp::LACK_OF_MEMORY);
-	if (gethostname(str, 255) == SOCKET_ERROR)
-	{
-		delete[] str;
-		throw ECSmtp(ECSmtp::WSA_HOSTNAME);
-	}
-	delete[] str;
-	return m_sLocalHostName.c_str();*/
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetRecipientCount
-// DESCRIPTION: Returns the number of recipents.
-//   ARGUMENTS: none
-// USES GLOBAL: Recipients
-// MODIFIES GL: none 
-//     RETURNS: number of recipents
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 unsigned int CSmtp::GetRecipientCount() const
 {
 	return Recipients.size();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetBCCRecipientCount
-// DESCRIPTION: Returns the number of bcc-recipents. 
-//   ARGUMENTS: none
-// USES GLOBAL: BCCRecipients
-// MODIFIES GL: none 
-//     RETURNS: number of bcc-recipents
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
+
 unsigned int CSmtp::GetBCCRecipientCount() const
 {
 	return BCCRecipients.size();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetCCRecipientCount
-// DESCRIPTION: Returns the number of cc-recipents.
-//   ARGUMENTS: none
-// USES GLOBAL: CCRecipients
-// MODIFIES GL: none 
-//     RETURNS: number of cc-recipents
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 unsigned int CSmtp::GetCCRecipientCount() const
 {
 	return CCRecipients.size();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetReplyTo
-// DESCRIPTION: Returns m_pcReplyTo string.
-//   ARGUMENTS: none
-// USES GLOBAL: m_sReplyTo
-// MODIFIES GL: none 
-//     RETURNS: m_sReplyTo string
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 const char* CSmtp::GetReplyTo() const
 {
 	return m_sReplyTo.c_str();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetMailFrom
-// DESCRIPTION: Returns m_pcMailFrom string.
-//   ARGUMENTS: none
-// USES GLOBAL: m_sMailFrom
-// MODIFIES GL: none 
-//     RETURNS: m_sMailFrom string
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 const char* CSmtp::GetMailFrom() const
 {
 	return m_sMailFrom.c_str();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetSenderName
-// DESCRIPTION: Returns m_pcNameFrom string.
-//   ARGUMENTS: none
-// USES GLOBAL: m_sNameFrom
-// MODIFIES GL: none 
-//     RETURNS: m_sNameFrom string
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
+
 const char* CSmtp::GetSenderName() const
 {
 	return m_sNameFrom.c_str();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetSubject
-// DESCRIPTION: Returns m_pcSubject string.
-//   ARGUMENTS: none
-// USES GLOBAL: m_sSubject
-// MODIFIES GL: none 
-//     RETURNS: m_sSubject string
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 const char* CSmtp::GetSubject() const
 {
 	return m_sSubject.c_str();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetXMailer
-// DESCRIPTION: Returns m_pcXMailer string.
-//   ARGUMENTS: none
-// USES GLOBAL: m_pcXMailer
-// MODIFIES GL: none 
-//     RETURNS: m_pcXMailer string
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 const char* CSmtp::GetXMailer() const
 {
 	return m_sXMailer.c_str();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetXPriority
-// DESCRIPTION: Returns m_iXPriority string.
-//   ARGUMENTS: none
-// USES GLOBAL: m_iXPriority
-// MODIFIES GL: none 
-//     RETURNS: CSmptXPriority m_pcXMailer
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
+
 CSmptXPriority CSmtp::GetXPriority() const
 {
 	return m_iXPriority;
@@ -1342,153 +983,58 @@ unsigned int CSmtp::GetMsgLines() const
 	return MsgBody.size();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetXPriority
-// DESCRIPTION: Setting priority of the message.
-//   ARGUMENTS: CSmptXPriority priority - priority of the message (	XPRIORITY_HIGH,
-//              XPRIORITY_NORMAL, XPRIORITY_LOW)
-// USES GLOBAL: none
-// MODIFIES GL: m_iXPriority 
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::SetXPriority(CSmptXPriority priority)
 {
 	m_iXPriority = priority;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetReplyTo
-// DESCRIPTION: Setting the return address.
-//   ARGUMENTS: const char *ReplyTo - return address
-// USES GLOBAL: m_sReplyTo
-// MODIFIES GL: m_sReplyTo
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::SetReplyTo(const char *ReplyTo)
 {
 	m_sReplyTo.erase();
 	m_sReplyTo.insert(0, ReplyTo);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetSenderMail
-// DESCRIPTION: Setting sender's mail.
-//   ARGUMENTS: const char *EMail - sender's e-mail
-// USES GLOBAL: m_sMailFrom
-// MODIFIES GL: m_sMailFrom
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::SetSenderMail(const char *EMail)
 {
 	m_sMailFrom.erase();
 	m_sMailFrom.insert(0, EMail);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetSenderName
-// DESCRIPTION: Setting sender's name.
-//   ARGUMENTS: const char *Name - sender's name
-// USES GLOBAL: m_sNameFrom
-// MODIFIES GL: m_sNameFrom
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::SetSenderName(const char *Name)
 {
 	m_sNameFrom.erase();
 	m_sNameFrom.insert(0, Name);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetSubject
-// DESCRIPTION: Setting subject of the message.
-//   ARGUMENTS: const char *Subject - subject of the message
-// USES GLOBAL: m_sSubject
-// MODIFIES GL: m_sSubject
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::SetSubject(const char *Subject)
 {
 	m_sSubject.erase();
 	m_sSubject.insert(0, Subject);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetSubject
-// DESCRIPTION: Setting the name of program which is sending the mail.
-//   ARGUMENTS: const char *XMailer - programe name
-// USES GLOBAL: m_sXMailer
-// MODIFIES GL: m_sXMailer
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
+
 void CSmtp::SetXMailer(const char *XMailer)
 {
 	m_sXMailer.erase();
 	m_sXMailer.insert(0, XMailer);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetLogin
-// DESCRIPTION: Setting the login of SMTP account's owner.
-//   ARGUMENTS: const char *Login - login of SMTP account's owner
-// USES GLOBAL: m_sLogin
-// MODIFIES GL: m_sLogin
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::SetLogin(const char *Login)
 {
 	m_sLogin.erase();
 	m_sLogin.insert(0, Login);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetPassword
-// DESCRIPTION: Setting the password of SMTP account's owner.
-//   ARGUMENTS: const char *Password - password of SMTP account's owner
-// USES GLOBAL: m_sPassword
-// MODIFIES GL: m_sPassword
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JP 2010-07-08
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::SetPassword(const char *Password)
 {
 	m_sPassword.erase();
 	m_sPassword.insert(0, Password);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: SetSMTPServer
-// DESCRIPTION: Setting the SMTP service name and port.
-//   ARGUMENTS: const char* SrvName - SMTP service name
-//              const unsigned short SrvPort - SMTO service port
-// USES GLOBAL: m_sSMTPSrvName
-// MODIFIES GL: m_sSMTPSrvName 
-//     RETURNS: none
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-//							JO 2010-0708
-////////////////////////////////////////////////////////////////////////////////
 void CSmtp::SetSMTPServer(const char* SrvName, const unsigned short SrvPort)
 {
 	m_iSMTPSrvPort = SrvPort;
@@ -1496,16 +1042,6 @@ void CSmtp::SetSMTPServer(const char* SrvName, const unsigned short SrvPort)
 	m_sSMTPSrvName.insert(0, SrvName);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//        NAME: GetErrorText (friend function)
-// DESCRIPTION: Returns the string for specified error code.
-//   ARGUMENTS: CSmtpError ErrorId - error code
-// USES GLOBAL: none
-// MODIFIES GL: none 
-//     RETURNS: error string
-//      AUTHOR: Jakub Piwowarczyk
-// AUTHOR/DATE: JP 2010-01-28
-////////////////////////////////////////////////////////////////////////////////
 std::string ECSmtp::GetErrorText() const
 {
 	switch (ErrorCode)
@@ -1588,4 +1124,3 @@ std::string ECSmtp::GetErrorText() const
 		return "Undefined error id";
 	}
 }
-
