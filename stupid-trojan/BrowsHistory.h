@@ -4,7 +4,8 @@
 #include <functional>  
 #include <vector>  
 #include "afxwin.h"  
-#include "CppSQLite3.h"  
+#include "CppSQLite3.h" 
+
 struct BrowsData
 {
 public:

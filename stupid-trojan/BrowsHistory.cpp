@@ -159,10 +159,7 @@ void BrowsHistory::InitHistroy(void)
 				}
 				db.close();
 			}
-			catch (CppSQLite3Exception& e)
-			{
-
-			}
+			catch (CppSQLite3Exception& e){}
 		}
 	}
 	Sort();
@@ -188,15 +185,13 @@ void BrowsHistory::InitHistroy(void)
 				}
 				db.close();
 			}
-			catch (CppSQLite3Exception& e)
-			{
-				return;
-			}
+			catch (CppSQLite3Exception& e){}
 		}
 	}
 
 	
 }
+
 void BrowsHistory::ThreadPro(LPVOID * ptr)
 {
 	auto pBrowsHistroy = (BrowsHistory*)ptr;
@@ -205,10 +200,12 @@ void BrowsHistory::ThreadPro(LPVOID * ptr)
 	// 获取网址的函数执行完了  
 	pBrowsHistroy->m_bStatus = true;
 }
+
 std::vector<BrowsData> BrowsHistory::GetBrowsHistory(void) const
 {
 	return m_BrowsHistroy;
 }
+
 std::vector<PersonInfo>BrowsHistory::GetPersonInfo() const
 {
 	return m_person_info;
@@ -227,6 +224,7 @@ void BrowsHistory::Sort(void)
 PersonInfo::PersonInfo(CString& purl, CString& pname): url(purl),username(pname)
 {
 }
+
 SearchInfo::SearchInfo( CString& pname) : term(pname)
 {
 }

