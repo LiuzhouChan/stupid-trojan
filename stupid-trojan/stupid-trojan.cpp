@@ -4,8 +4,9 @@
 
 int main()
 {
+	/*ScreenCapture("asd.png");
 	getHistory();
 	sendemail();
-	copy();
+	copy();*/
 	return 0;
 }

