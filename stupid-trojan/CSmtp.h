@@ -40,7 +40,7 @@ typedef struct sockaddr* LPSOCKADDR;
 
 #define TIME_IN_SEC		10		// how long client will wait for server response in non-blocking mode
 #define BUFFER_SIZE 10240	  // SendData and RecvData buffers sizes
-#define MSG_SIZE_IN_MB 5		// the maximum size of the message with all attachments
+#define MSG_SIZE_IN_MB 10		// the maximum size of the message with all attachments
 #define COUNTER_VALUE	100		// how many times program will try to receive data
 
 const char BOUNDARY_TEXT[] = "__MESSAGE__ID__54yg6f6h6y456345";

