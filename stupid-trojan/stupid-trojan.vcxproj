@@ -174,7 +174,6 @@
     <ClCompile Include="FTPDataTypes.cpp" />
     <ClCompile Include="FTPFileStatus.cpp" />
     <ClCompile Include="FTPListParse.cpp" />
-    <ClCompile Include="Smtp.cpp" />
     <ClCompile Include="stupid-trojan.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>

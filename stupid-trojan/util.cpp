@@ -202,7 +202,7 @@ cleanup:
 	return result;
 }
 
-void tcpconnect(char *addr,char*  port)
+void tcpconnect(const char *addr,const char*  port)
 {
 	int pn(0);
 	list<string> l;
@@ -347,5 +347,25 @@ void tcpconnect(char *addr,char*  port)
 
 bool get_host_file()
 {
-	
+	nsFTP::CFTPClient ftpClient;
+	nsFTP::CLogonInfo logonInfo(L"192.168.1.103", 2112);
+	ftpClient.Login(logonInfo);
+	ftpClient.Login(logonInfo);
+	// get directory listing
+	nsFTP::TFTPFileStatusShPtrVec list;
+	ftpClient.List(L"/", list);
+	// iterate listing
+	for (nsFTP::TFTPFileStatusShPtrVec::iterator it = list.begin();
+		it != list.end(); ++it)
+		TRACE("\n%s", (*it)->Name().c_str());
+	char   buffer[MAX_PATH];
+	getcwd(buffer, MAX_PATH);
+	strcat(buffer, "\\hosts.txt");
+	const size_t cSize = strlen(buffer)+1;
+	std::wstring wc(cSize, L'#');
+	mbstowcs(&wc[0], buffer, cSize);
+	auto result=ftpClient.DownloadFile(L"/hosts.txt",wc);
+	// disconnect
+	ftpClient.Logout();
+	return result;
 }
