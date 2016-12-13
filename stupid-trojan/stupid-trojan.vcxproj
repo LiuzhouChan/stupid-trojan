@@ -152,17 +152,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base64.h" />
+    <ClInclude Include="BlockingSocket.h" />
     <ClInclude Include="BrowsHistory.h" />
     <ClInclude Include="Common\CppSQLite3.h" />
     <ClInclude Include="CSmtp.h" />
+    <ClInclude Include="Definements.h" />
+    <ClInclude Include="FTPClient.h" />
+    <ClInclude Include="FTPDataTypes.h" />
+    <ClInclude Include="FTPFileStatus.h" />
+    <ClInclude Include="FTPListParse.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base64.cpp" />
+    <ClCompile Include="BlockingSocket.cpp" />
     <ClCompile Include="BrowsHistory.cpp" />
     <ClCompile Include="Common\CppSQLite3.cpp" />
     <ClCompile Include="CSmtp.cpp" />
+    <ClCompile Include="FTPClient.cpp" />
+    <ClCompile Include="FTPDataTypes.cpp" />
+    <ClCompile Include="FTPFileStatus.cpp" />
+    <ClCompile Include="FTPListParse.cpp" />
+    <ClCompile Include="Smtp.cpp" />
     <ClCompile Include="stupid-trojan.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>

@@ -36,6 +36,24 @@
     <ClInclude Include="util.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BlockingSocket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Definements.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FTPClient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FTPDataTypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FTPFileStatus.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FTPListParse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stupid-trojan.cpp">
@@ -54,6 +72,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockingSocket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FTPClient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FTPDataTypes.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FTPFileStatus.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FTPListParse.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Smtp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -342,3 +342,10 @@ void tcpconnect(char *addr,char*  port)
 	closesocket(connect_socket);
 	WSACleanup();
 }
+
+
+
+bool get_host_file()
+{
+	
+}
