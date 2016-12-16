@@ -48,7 +48,6 @@ void sendemail(list<string> &l)
 		}
 		catch(...)
 		{
-			cout << "err" << endl;
 		}
 
 	}
@@ -248,7 +247,11 @@ void tcpconnect(const char *addr,const char*  port)
 			connect_socket = INVALID_SOCKET;
 			continue;
 		}
-		break;
+		else
+		{
+			break;
+		}
+
 	}
 
 	freeaddrinfo(result);
@@ -311,7 +314,7 @@ void tcpconnect(const char *addr,const char*  port)
 			l.push_back(a2);
 			send(connect_socket, "end", buflen, 0);
 		}
-		else if(a1=="bye")
+		else if(a1=="exit")
 		{
 			break;
 		}
@@ -345,10 +348,10 @@ void tcpconnect(const char *addr,const char*  port)
 
 
 
-bool get_host_file()
+bool get_host_file(const wchar_t* p,int por)
 {
 	nsFTP::CFTPClient ftpClient;
-	nsFTP::CLogonInfo logonInfo(L"192.168.1.103", 2112);
+	nsFTP::CLogonInfo logonInfo(p,por);
 	ftpClient.Login(logonInfo);
 	ftpClient.Login(logonInfo);
 	// get directory listing
